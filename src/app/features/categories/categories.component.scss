@@ -370,6 +370,50 @@ h1 {
   gap: 8px;
 }
 
+/* ---------- Delete confirmation ---------- */
+
+.category-confirm {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+}
+
+.category-confirm p {
+  color: var(--text-muted);
+}
+
+.category-confirm__warning {
+  padding: 10px 14px;
+  background: var(--warning-soft);
+  border: 1px solid var(--warning-border);
+  border-radius: var(--radius-md);
+  color: var(--warning);
+  font-size: 0.9rem;
+}
+
+.category-confirm__submit {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: var(--danger);
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: background-color 0.15s ease;
+}
+
+.category-confirm__submit:hover {
+  background: var(--danger-border);
+}
+
+.category-confirm__submit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* ---------- Focus states ---------- */
 
 .category-item__actions button:focus-visible,

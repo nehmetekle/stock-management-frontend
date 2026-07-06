@@ -43,7 +43,7 @@
           <button type="button" class="category-item__edit" (click)="editCategory(category)">
             Edit
           </button>
-          <button type="button" class="category-item__delete" (click)="deleteCategory(category.id)">
+          <button type="button" class="category-item__delete" (click)="confirmDeleteCategory(category)">
             Delete
           </button>
         </div>
@@ -123,6 +123,43 @@
             </div>
             }
         }
+      </aside>
+    </div>
+  }
+
+  @if (modalMode === 'delete' && deleteTarget; as target) {
+    <div class="category-modal" role="dialog" aria-modal="true" (click)="closeModal()">
+      <aside class="category-modal__panel category-confirm" (click)="$event.stopPropagation()">
+        <div class="category-modal__header">
+          <h2>Delete category</h2>
+        </div>
+
+        @if (checkingUsage) {
+          <p class="categories__status">Checking whether this category is in use...</p>
+        } @else {
+          @if ((deleteUsageCount ?? 0) > 0) {
+            <p class="category-confirm__warning">
+              This category is used by {{ deleteUsageCount }}
+              {{ deleteUsageCount === 1 ? 'product' : 'products' }}.
+              Deleting it will leave {{ deleteUsageCount === 1 ? 'that product' : 'those products' }}
+              pointing to a removed category.
+            </p>
+          }
+
+          <p>
+            Are you sure you want to delete <strong>{{ target.name }}</strong>?
+            This action cannot be undone.
+          </p>
+        }
+
+        <div class="category-modal__actions">
+          <button class="category-form__reset" type="button" (click)="closeModal()">
+            Cancel
+          </button>
+          <button class="category-confirm__submit" type="button" (click)="proceedDelete()">
+            Delete category
+          </button>
+        </div>
       </aside>
     </div>
   }

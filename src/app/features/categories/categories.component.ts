@@ -13,6 +13,7 @@ import { distinctUntilChanged } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { AppState } from '../../store/app.state';
+import { ProductService } from '../products/services/product.service';
 import { CategoryModel } from './models/category.model';
 import { CategoryAction } from './state/category.action';
 import {
@@ -23,7 +24,7 @@ import {
   selectSelectedCategory
 } from './state/category.selector';
 
-type CategoryModalMode = 'create' | 'edit' | 'details' | null;
+type CategoryModalMode = 'create' | 'edit' | 'details' | 'delete' | null;
 
 @Component({
   selector: 'app-categories',
@@ -39,6 +40,9 @@ export class CategoriesComponent implements OnInit, OnDestroy {
   readonly successMessage$ = this.store.select(selectCategoriesSuccessMessage);
   readonly selectedCategory$ = this.store.select(selectSelectedCategory);
   modalMode: CategoryModalMode = null;
+  deleteTarget: CategoryModel | null = null;
+  deleteUsageCount: number | null = null;
+  checkingUsage = false;
   private successMessageTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly destroyRef = inject(DestroyRef);
 
@@ -50,7 +54,8 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly store: Store<AppState>,
-    private readonly fb: FormBuilder
+    private readonly fb: FormBuilder,
+    private readonly productService: ProductService
   ) {}
 
   ngOnInit(): void {
@@ -121,8 +126,33 @@ export class CategoriesComponent implements OnInit, OnDestroy {
     this.store.dispatch(CategoryAction.getCategoryDetail({ id }));
   }
 
-  deleteCategory(id: number): void {
-    this.store.dispatch(CategoryAction.deleteCategory({ id }));
+  confirmDeleteCategory(category: CategoryModel): void {
+    this.deleteTarget = category;
+    this.deleteUsageCount = null;
+    this.checkingUsage = true;
+    this.modalMode = 'delete';
+
+    this.productService
+      .getListProducts({ category: category.id })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.deleteUsageCount = response.data?.length ?? 0;
+          this.checkingUsage = false;
+        },
+        error: () => {
+          this.checkingUsage = false;
+        }
+      });
+  }
+
+  proceedDelete(): void {
+    if (!this.deleteTarget) {
+      return;
+    }
+
+    this.store.dispatch(CategoryAction.deleteCategory({ id: this.deleteTarget.id }));
+    this.closeModal();
   }
 
   resetForm(): void {
@@ -139,6 +169,9 @@ export class CategoriesComponent implements OnInit, OnDestroy {
 
   closeModal(): void {
     this.modalMode = null;
+    this.deleteTarget = null;
+    this.deleteUsageCount = null;
+    this.checkingUsage = false;
     this.resetForm();
   }
 

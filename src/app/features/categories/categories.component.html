@@ -1,0 +1,129 @@
+<section class="categories">
+  <header class="categories__header">
+    <div>
+      <p class="categories__eyebrow">Catalog</p>
+      <h1>Categories</h1>
+    </div>
+
+    <button class="categories__add" type="button" (click)="openCreateModal()">
+      Add category
+    </button>
+  </header>
+
+  @if (loading$ | async) {
+    <p class="categories__status">Loading categories...</p>
+  }
+
+  @if (successMessage$ | async; as successMessage) {
+    <p class="categories__success">{{ successMessage }}</p>
+  }
+
+  @if (error$ | async; as error) {
+    <p class="categories__error">{{ error.message }}</p>
+  }
+
+  <div class="categories__table">
+    <div class="categories__table-head">
+      <span>Category</span>
+      <span>Actions</span>
+    </div>
+
+    @for (category of categories$ | async; track category.id) {
+      <article class="category-item">
+        <div class="category-item__content">
+          <h2>
+            <button type="button" class="category-item__name" (click)="showCategoryDetails(category.id)">
+              {{ category.name }}
+            </button>
+          </h2>
+          <p>{{ category.description || 'No description' }}</p>
+        </div>
+
+        <div class="category-item__actions">
+          <button type="button" class="category-item__edit" (click)="editCategory(category)">
+            Edit
+          </button>
+          <button type="button" class="category-item__delete" (click)="deleteCategory(category.id)">
+            Delete
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <p class="categories__status">No categories found.</p>
+    }
+  </div>
+
+  @if (modalMode === 'create' || modalMode === 'edit') {
+    <div class="category-modal" role="dialog" aria-modal="true" (click)="closeModal()">
+      <form
+        class="category-modal__panel category-form"
+        [formGroup]="categoryForm"
+        (ngSubmit)="submitCategory()"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="category-modal__header">
+          <h2>{{ isEditing() ? 'Edit category' : 'Add category' }}</h2>
+        </div>
+
+        <label class="category-form__field">
+          <span>Name</span>
+          <input type="text" formControlName="name" placeholder="Category name" />
+
+          @if (categoryForm.controls.name.touched && categoryForm.controls.name.invalid) {
+            <small>Name is required.</small>
+          }
+        </label>
+
+        <label class="category-form__field">
+          <span>Description</span>
+          <textarea
+            rows="3"
+            formControlName="description"
+            placeholder="Category description"
+          ></textarea>
+        </label>
+
+        <div class="category-modal__actions">
+          <button class="category-form__reset" type="button" (click)="closeModal()">
+            Cancel
+          </button>
+          <button class="category-form__submit" type="submit" [disabled]="categoryForm.invalid">
+            {{ isEditing() ? 'Update category' : 'Create category' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (modalMode === 'details') {
+    <div class="category-modal" role="dialog" aria-modal="true" (click)="closeModal()">
+      <aside class="category-modal__panel category-details" (click)="$event.stopPropagation()">
+        <div class="category-modal__header">
+          <h2>Category details</h2>
+          <button class="category-modal__close" type="button" (click)="closeModal()">
+            Close
+          </button>
+        </div>
+
+        @if (loading$ | async) {
+          <p class="categories__status">Loading category details...</p>
+        } @else {
+          @if (selectedCategory$ | async; as selectedCategory) {
+            <div class="category-details__body">
+              <p class="category-details__label">Name</p>
+              <h3>{{ selectedCategory.name }}</h3>
+
+              <p class="category-details__label">Description</p>
+              <p>{{ selectedCategory.description || 'No description' }}</p>
+
+              @if (selectedCategory.created_at) {
+                <p class="category-details__label">Created at</p>
+                <p>{{ selectedCategory.created_at }}</p>
+              }
+            </div>
+            }
+        }
+      </aside>
+    </div>
+  }
+</section>

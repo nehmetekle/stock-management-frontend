@@ -8,8 +8,18 @@ export const routes: Routes = [
     component: DashboardComponent,
     children: [
       {
+        path: '',
+        redirectTo: 'categories',
+        pathMatch: 'full'
+      },
+      {
+        path: 'categories',
+        loadChildren: () =>
+          import('../features/categories/categories.routes').then((m) => m.CATEGORIES_ROUTES)
+      },
+      {
         path: '**',
-        redirectTo: ''
+        redirectTo: 'categories'
       }
     ]
   }

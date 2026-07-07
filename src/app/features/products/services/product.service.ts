@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { ApiConfigService } from '../../../core/services/api-config.service';
+import { ProductFilterModel } from '../models/product-filter.model';
 import { ProductRequestModel } from '../models/product-request.model';
 import {
   ProductDeleteResponse,
@@ -21,7 +22,7 @@ export class ProductService {
     private readonly apiConfig: ApiConfigService
   ) {}
 
-  getListProducts(filters?: { category?: number; supplier?: number }): Observable<ProductListResponse> {
+  getListProducts(filters?: ProductFilterModel): Observable<ProductListResponse> {
     const params: Record<string, number> = {};
 
     if (filters?.category) {
@@ -30,6 +31,10 @@ export class ProductService {
 
     if (filters?.supplier) {
       params['supplier'] = filters.supplier;
+    }
+
+    if (filters?.maxPrice) {
+      params['maxPrice'] = filters.maxPrice;
     }
 
     return this.http.get<ProductListResponse>(this.endpoint, { params });

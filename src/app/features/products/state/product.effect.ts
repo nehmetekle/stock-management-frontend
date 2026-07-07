@@ -17,8 +17,8 @@ export class ProductEffect {
   getListProducts = createEffect(() =>
     this.actions$.pipe(
       ofType(ProductAction.getListProducts),
-      exhaustMap(() =>
-        this.productService.getListProducts().pipe(
+      exhaustMap(({ filters }) =>
+        this.productService.getListProducts(filters).pipe(
           takeUntil(this.actions$.pipe(ofType(ProductAction.cancelProductsRequest))),
           switchMap((response) => [
             ProductAction.getListProductsResponse({ response })

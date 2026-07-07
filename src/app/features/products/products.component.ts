@@ -19,6 +19,7 @@ import { selectAllCategories } from '../categories/state/category.selector';
 import { SupplierModel } from '../suppliers/models/supplier.model';
 import { SupplierAction } from '../suppliers/state/supplier.action';
 import { selectAllSuppliers } from '../suppliers/state/supplier.selector';
+import { ProductFilterModel } from './models/product-filter.model';
 import { ProductModel } from './models/product.model';
 import { ProductAction } from './state/product.action';
 import {
@@ -66,13 +67,19 @@ export class ProductsComponent implements OnInit, OnDestroy {
     supplier_id: this.fb.control<number | null>(null, [Validators.required])
   });
 
+  readonly filterForm = this.fb.nonNullable.group({
+    category: this.fb.control<number | null>(null),
+    supplier: this.fb.control<number | null>(null),
+    maxPrice: this.fb.control<number | null>(null, [Validators.min(0.01)])
+  });
+
   constructor(
     private readonly store: Store<AppState>,
     private readonly fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.store.dispatch(ProductAction.getListProducts());
+    this.store.dispatch(ProductAction.getListProducts({}));
     this.store.dispatch(CategoryAction.getListCategories());
     this.store.dispatch(SupplierAction.getListSuppliers());
 
@@ -110,6 +117,33 @@ export class ProductsComponent implements OnInit, OnDestroy {
   openCreateModal(): void {
     this.resetForm();
     this.modalMode = 'create';
+  }
+
+  applyProductFilters(): void {
+    this.filterForm.markAllAsTouched();
+
+    if (this.filterForm.invalid) {
+      return;
+    }
+
+    this.store.dispatch(ProductAction.getListProducts({
+      filters: this.getActiveProductFilters()
+    }));
+  }
+
+  clearProductFilters(): void {
+    this.filterForm.reset({
+      category: null,
+      supplier: null,
+      maxPrice: null
+    });
+    this.store.dispatch(ProductAction.getListProducts({}));
+  }
+
+  hasActiveFilters(): boolean {
+    const { category, supplier, maxPrice } = this.filterForm.getRawValue();
+
+    return Boolean(category || supplier || maxPrice);
   }
 
   submitProduct(): void {
@@ -237,5 +271,24 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
     this.store.dispatch(ProductAction.resetProductsState());
     this.store.dispatch(ProductAction.cancelProductsRequest());
+  }
+
+  private getActiveProductFilters(): ProductFilterModel | undefined {
+    const { category, supplier, maxPrice } = this.filterForm.getRawValue();
+    const filters: ProductFilterModel = {};
+
+    if (category) {
+      filters.category = category;
+    }
+
+    if (supplier) {
+      filters.supplier = supplier;
+    }
+
+    if (maxPrice) {
+      filters.maxPrice = maxPrice;
+    }
+
+    return Object.keys(filters).length ? filters : undefined;
   }
 }

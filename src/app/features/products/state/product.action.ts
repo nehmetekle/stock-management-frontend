@@ -2,6 +2,7 @@ import { createAction, props } from '@ngrx/store';
 
 import { CommonResponseModel } from '../../../shared/models/common-response.model';
 import { ApiErrorModel } from '../../../shared/models/error.model';
+import { ProductFilterModel } from '../models/product-filter.model';
 import { ProductRequestModel } from '../models/product-request.model';
 import {
   ProductDeleteResponse,
@@ -10,7 +11,10 @@ import {
 } from '../models/product-response.model';
 
 export abstract class ProductAction {
-  static getListProducts = createAction('[Products] Retrieve all products');
+  static getListProducts = createAction(
+    '[Products] Retrieve all products',
+    props<{ filters?: ProductFilterModel }>()
+  );
 
   static getListProductsResponse = createAction(
     '[Products] Retrieve all products response',

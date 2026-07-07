@@ -7,7 +7,8 @@ import { SupplierRequestModel } from '../models/supplier-request.model';
 import {
   SupplierDeleteResponse,
   SupplierListResponse,
-  SupplierResponse
+  SupplierResponse,
+  SupplierSummaryResponse
 } from '../models/supplier-response.model';
 
 @Injectable({
@@ -29,6 +30,10 @@ export class SupplierService {
     return this.http.get<SupplierResponse>(`${this.endpoint}/detail`, {
       params: { id }
     });
+  }
+
+  getSupplierSummary(): Observable<SupplierSummaryResponse> {
+    return this.http.get<SupplierSummaryResponse>(`${this.endpoint}/summary`);
   }
 
   createSupplier(request: SupplierRequestModel): Observable<SupplierResponse> {

@@ -1,4 +1,4 @@
-import { AsyncPipe } from '@angular/common';
+import { AsyncPipe, DecimalPipe } from '@angular/common';
 import {
   Component,
   DestroyRef,
@@ -15,10 +15,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AppState } from '../../store/app.state';
 import { ProductService } from '../products/services/product.service';
 import { SupplierModel } from './models/supplier.model';
+import { SupplierSummaryModel } from './models/supplier-summary.model';
 import { SupplierAction } from './state/supplier.action';
 import {
   selectAllSuppliers,
   selectSelectedSupplier,
+  selectSupplierSummary,
   selectSuppliersError,
   selectSuppliersLoading,
   selectSuppliersSuccessMessage
@@ -29,7 +31,7 @@ type SupplierModalMode = 'create' | 'edit' | 'details' | 'delete' | null;
 @Component({
   selector: 'app-suppliers',
   standalone: true,
-  imports: [AsyncPipe, ReactiveFormsModule],
+  imports: [AsyncPipe, DecimalPipe, ReactiveFormsModule],
   templateUrl: './suppliers.component.html',
   styleUrl: './suppliers.component.scss'
 })
@@ -39,10 +41,12 @@ export class SuppliersComponent implements OnInit, OnDestroy {
   readonly error$ = this.store.select(selectSuppliersError);
   readonly successMessage$ = this.store.select(selectSuppliersSuccessMessage);
   readonly selectedSupplier$ = this.store.select(selectSelectedSupplier);
+  readonly supplierSummary$ = this.store.select(selectSupplierSummary);
   modalMode: SupplierModalMode = null;
   deleteTarget: SupplierModel | null = null;
   deleteUsageCount: number | null = null;
   checkingUsage = false;
+  supplierSummaryById: Record<number, SupplierSummaryModel> = {};
   private successMessageTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly destroyRef = inject(DestroyRef);
 
@@ -62,6 +66,19 @@ export class SuppliersComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.store.dispatch(SupplierAction.getListSuppliers());
+    this.store.dispatch(SupplierAction.getSupplierSummary());
+
+    this.supplierSummary$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((summaries) => {
+        this.supplierSummaryById = summaries.reduce<Record<number, SupplierSummaryModel>>(
+          (summaryById, summary) => ({
+            ...summaryById,
+            [summary.supplier_id]: summary
+          }),
+          {}
+        );
+      });
 
     this.store
       .select(selectSuppliersSuccessMessage)
@@ -130,6 +147,10 @@ export class SuppliersComponent implements OnInit, OnDestroy {
   showSupplierDetails(id: number): void {
     this.modalMode = 'details';
     this.store.dispatch(SupplierAction.getSupplierDetail({ id }));
+  }
+
+  getSupplierSummary(supplierId: number): SupplierSummaryModel | undefined {
+    return this.supplierSummaryById[supplierId];
   }
 
   confirmDeleteSupplier(supplier: SupplierModel): void {

@@ -89,7 +89,7 @@ h1 {
 
 .suppliers__table-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 260px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr) 86px 110px 170px;
   gap: 16px;
   padding: 12px 20px;
   border-bottom: 1px solid var(--border);
@@ -106,7 +106,7 @@ h1 {
 
 .supplier-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 260px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 0.7fr) 86px 110px 170px;
   align-items: center;
   gap: 16px;
   padding: 16px 20px;

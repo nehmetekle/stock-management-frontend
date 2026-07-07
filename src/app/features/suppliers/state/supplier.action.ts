@@ -7,6 +7,7 @@ import {
   SupplierDeleteResponse,
   SupplierListResponse,
   SupplierResponse,
+  SupplierSummaryResponse,
 } from '../models/supplier-response.model';
 
 export abstract class SupplierAction {
@@ -30,6 +31,13 @@ export abstract class SupplierAction {
   static getSupplierDetailResponse = createAction(
     '[Suppliers] Retrieve supplier detail response',
     props<{ response: SupplierResponse }>()
+  );
+
+  static getSupplierSummary = createAction('[Suppliers] Retrieve supplier summary');
+
+  static getSupplierSummaryResponse = createAction(
+    '[Suppliers] Retrieve supplier summary response',
+    props<{ response: SupplierSummaryResponse }>()
   );
 
   static createSupplier = createAction(

@@ -26,6 +26,8 @@
     <div class="suppliers__table-head">
       <span>Supplier</span>
       <span>Country</span>
+      <span>Products</span>
+      <span>Stock value</span>
       <span>Actions</span>
     </div>
 
@@ -41,6 +43,10 @@
         </div>
 
         <p class="supplier-item__cell">{{ supplier.country }}</p>
+        <p class="supplier-item__cell">{{ getSupplierSummary(supplier.id)?.product_count ?? 0 }}</p>
+        <p class="supplier-item__cell">
+          {{ (getSupplierSummary(supplier.id)?.total_stock_value ?? 0) | number: '1.2-2' }}
+        </p>
 
         <div class="supplier-item__actions">
           <button type="button" class="supplier-item__edit" (click)="editSupplier(supplier)">
@@ -138,6 +144,12 @@
 
               <p class="supplier-details__label">Country</p>
               <p>{{ selectedSupplier.country }}</p>
+
+              <p class="supplier-details__label">Products</p>
+              <p>{{ getSupplierSummary(selectedSupplier.id)?.product_count ?? 0 }}</p>
+
+              <p class="supplier-details__label">Stock value</p>
+              <p>{{ (getSupplierSummary(selectedSupplier.id)?.total_stock_value ?? 0) | number: '1.2-2' }}</p>
 
               @if (selectedSupplier.created_at) {
                 <p class="supplier-details__label">Created at</p>

@@ -25,6 +25,11 @@ export const supplierReducer = createReducer(
     suppliers: response.data,
     isLoading: false
   })),
+  on(SupplierAction.getSupplierSummaryResponse, (state, { response }) => ({
+    ...state,
+    supplierSummary: response.data,
+    isLoading: false
+  })),
   on(SupplierAction.getSupplierDetailResponse, (state, { response }) => ({
     ...state,
     selectedSupplier: response.data,

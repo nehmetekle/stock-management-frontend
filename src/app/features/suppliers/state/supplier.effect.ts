@@ -48,6 +48,23 @@ export class SupplierEffect {
     )
   );
 
+  getSupplierSummary = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SupplierAction.getSupplierSummary),
+      exhaustMap(() =>
+        this.supplierService.getSupplierSummary().pipe(
+          takeUntil(this.actions$.pipe(ofType(SupplierAction.cancelSuppliersRequest))),
+          switchMap((response) => [
+            SupplierAction.getSupplierSummaryResponse({ response })
+          ]),
+          catchError((error: HttpErrorResponse) =>
+            of(SupplierAction.setError({ error: this.toApiError(error) }))
+          )
+        )
+      )
+    )
+  );
+
   createSupplier = createEffect(() =>
     this.actions$.pipe(
       ofType(SupplierAction.createSupplier),
@@ -55,7 +72,8 @@ export class SupplierEffect {
         this.supplierService.createSupplier(request).pipe(
           takeUntil(this.actions$.pipe(ofType(SupplierAction.cancelSuppliersRequest))),
           switchMap((response) => [
-            SupplierAction.createSupplierResponse({ response })
+            SupplierAction.createSupplierResponse({ response }),
+            SupplierAction.getSupplierSummary()
           ]),
           catchError((error: HttpErrorResponse) =>
             of(SupplierAction.setError({ error: this.toApiError(error) }))
@@ -72,7 +90,8 @@ export class SupplierEffect {
         this.supplierService.updateSupplier(request).pipe(
           takeUntil(this.actions$.pipe(ofType(SupplierAction.cancelSuppliersRequest))),
           switchMap((response) => [
-            SupplierAction.updateSupplierResponse({ response })
+            SupplierAction.updateSupplierResponse({ response }),
+            SupplierAction.getSupplierSummary()
           ]),
           catchError((error: HttpErrorResponse) =>
             of(SupplierAction.setError({ error: this.toApiError(error) }))
@@ -89,7 +108,8 @@ export class SupplierEffect {
         this.supplierService.deleteSupplier(id).pipe(
           takeUntil(this.actions$.pipe(ofType(SupplierAction.cancelSuppliersRequest))),
           switchMap((response) => [
-            SupplierAction.deleteSupplierResponse({ id, response })
+            SupplierAction.deleteSupplierResponse({ id, response }),
+            SupplierAction.getSupplierSummary()
           ]),
           catchError((error: HttpErrorResponse) =>
             of(SupplierAction.setError({ error: this.toApiError(error) }))

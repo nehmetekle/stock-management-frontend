@@ -14,6 +14,11 @@ export const selectSelectedSupplier = createSelector(
   (state) => state?.selectedSupplier
 );
 
+export const selectSupplierSummary = createSelector(
+  selectSuppliersState,
+  (state) => state?.supplierSummary ?? []
+);
+
 export const selectSuppliersLoading = createSelector(
   selectSuppliersState,
   (state) => state?.isLoading ?? false

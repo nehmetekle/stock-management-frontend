@@ -257,6 +257,13 @@
                     <p>{{ selectedProduct.created_at }}</p>
                   </div>
                 }
+
+                @if (selectedProduct.updated_at) {
+                  <div class="product-details__row">
+                    <p class="product-details__label">Updated at</p>
+                    <p>{{ selectedProduct.updated_at }}</p>
+                  </div>
+                }
               </div>
 
               @if (selectedProduct.is_low_stock || selectedProduct.is_heavy_and_cheap) {

@@ -1,0 +1,530 @@
+.products {
+  display: grid;
+  gap: 24px;
+}
+
+.products__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.products__eyebrow,
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.products__eyebrow {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+h1 {
+  color: var(--text);
+  font-size: 1.6rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.products__add {
+  min-height: 38px;
+  padding: 0 16px;
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background-color 0.15s ease;
+}
+
+.products__add:hover {
+  background: var(--accent-strong);
+}
+
+/* ---------- Status banners ---------- */
+
+.products__success,
+.products__error {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+}
+
+.products__success {
+  background: var(--success-soft);
+  border: 1px solid var(--success-border);
+  color: var(--success);
+}
+
+.products__error {
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+}
+
+.products__status {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+/* ---------- Table ---------- */
+
+.products__table {
+  display: grid;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.products__table-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.8fr) 80px 230px 160px;
+  gap: 16px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.products__table-head span:last-child {
+  text-align: right;
+}
+
+.product-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr) minmax(0, 0.8fr) 80px 230px 160px;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.15s ease;
+}
+
+.product-item:hover {
+  background: var(--surface-hover);
+}
+
+.product-item:last-child {
+  border-bottom: 0;
+}
+
+.product-item__content {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.product-item h2 {
+  font-size: 0.95rem;
+}
+
+.product-item__name {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  text-align: left;
+  transition: color 0.15s ease;
+}
+
+.product-item__name:hover {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.product-item__name:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.product-item__content p,
+.product-item__cell {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.product-item__stock {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.product-item__ref {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- Badges ---------- */
+
+.product-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.product-badge--warning {
+  background: var(--warning-soft);
+  border: 1px solid var(--warning-border);
+  color: var(--warning);
+}
+
+.product-badge--info {
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+}
+
+.product-badge--danger {
+  background: var(--danger-soft);
+  border: 1px solid var(--danger-border);
+  color: var(--danger);
+}
+
+/* ---------- Action buttons ---------- */
+
+.product-item__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.product-item__actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.83rem;
+  font-weight: 500;
+  line-height: 1;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.product-item__actions button:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.product-item__actions button.product-item__edit:hover {
+  border-color: var(--warning-border);
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.product-item__actions button.product-item__delete {
+  color: var(--danger);
+}
+
+.product-item__actions button.product-item__delete:hover {
+  border-color: var(--danger-border);
+  background: var(--danger-soft);
+}
+
+/* ---------- Modal ---------- */
+
+.product-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(28 25 23 / 40%);
+}
+
+.product-modal__panel {
+  width: min(100%, 520px);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 48px rgb(28 25 23 / 12%);
+}
+
+.product-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 4px;
+}
+
+.product-modal__header h2 {
+  color: var(--text);
+  font-size: 1.05rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.product-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* ---------- Form ---------- */
+
+.product-form {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+}
+
+.product-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.product-form__field {
+  display: grid;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.product-form__field input,
+.product-form__field select {
+  width: 100%;
+  padding: 9px 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.92rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.product-form__field input::placeholder {
+  color: var(--text-faint);
+}
+
+.product-form__field input:focus,
+.product-form__field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.product-form__field small {
+  color: var(--danger);
+  font-weight: 400;
+}
+
+.product-form__submit,
+.product-form__reset,
+.product-modal__close {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.product-form__reset:hover,
+.product-modal__close:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.product-form__submit {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.product-form__submit:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+
+.product-form__submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ---------- Details panel ---------- */
+
+.product-details {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+}
+
+.product-details__label {
+  color: var(--text-faint);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.product-details h3 {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.product-details p,
+.product-details small {
+  color: var(--text-muted);
+}
+
+.product-details__body {
+  display: grid;
+  gap: 18px;
+}
+
+.product-details__row {
+  display: grid;
+  gap: 4px;
+}
+
+.product-details__ref {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.product-details__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+}
+
+.product-details__badges {
+  display: flex;
+  gap: 8px;
+}
+
+@media (max-width: 480px) {
+  .product-details__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Delete confirmation ---------- */
+
+.product-confirm {
+  display: grid;
+  gap: 16px;
+  padding: 24px;
+}
+
+.product-confirm p {
+  color: var(--text-muted);
+}
+
+.product-confirm__submit {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid var(--danger);
+  border-radius: var(--radius-sm);
+  background: var(--danger);
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: background-color 0.15s ease;
+}
+
+.product-confirm__submit:hover {
+  background: var(--danger-border);
+}
+
+.product-confirm__submit:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Focus states ---------- */
+
+.product-item__actions button:focus-visible,
+.product-form__submit:focus-visible,
+.product-form__reset:focus-visible,
+.product-modal__close:focus-visible,
+.products__add:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 900px) {
+  .products__table-head {
+    display: none;
+  }
+
+  .product-item {
+    align-items: flex-start;
+    grid-template-columns: 1fr;
+  }
+
+  .product-item__actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .product-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .product-modal {
+    align-items: end;
+    padding: 12px;
+  }
+
+  .product-modal__panel {
+    width: 100%;
+  }
+
+  .product-modal__actions {
+    flex-direction: column-reverse;
+  }
+}

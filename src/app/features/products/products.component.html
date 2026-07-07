@@ -1,0 +1,305 @@
+<section class="products">
+  <header class="products__header">
+    <div>
+      <p class="products__eyebrow">Catalog</p>
+      <h1>Products</h1>
+    </div>
+
+    <button class="products__add" type="button" (click)="openCreateModal()">
+      Add product
+    </button>
+  </header>
+
+  @if (loading$ | async) {
+    <p class="products__status">Loading products...</p>
+  }
+
+  @if (successMessage$ | async; as successMessage) {
+    <p class="products__success">{{ successMessage }}</p>
+  }
+
+  @if (error$ | async; as error) {
+    <p class="products__error">{{ error.message }}</p>
+  }
+
+  <div class="products__table">
+    <div class="products__table-head">
+      <span>Product</span>
+      <span>Category</span>
+      <span>Supplier</span>
+      <span>Price</span>
+      <span>Stock</span>
+      <span>Actions</span>
+    </div>
+
+    @for (product of products$ | async; track product.id) {
+      <article class="product-item">
+        <div class="product-item__content">
+          <h2>
+            <button type="button" class="product-item__name" (click)="showProductDetails(product.id)">
+              {{ product.name }}
+            </button>
+          </h2>
+          <p>{{ product.sku }}</p>
+        </div>
+
+        <div class="product-item__cell product-item__ref">
+          <span>{{ product.category_name || '—' }}</span>
+          @if (isCategoryOrphaned(product.category_name)) {
+            <span class="product-badge product-badge--danger" title="This category has been deleted">
+              Deleted
+            </span>
+          }
+        </div>
+
+        <div class="product-item__cell product-item__ref">
+          <span>{{ product.supplier_name || '—' }}</span>
+          @if (isSupplierOrphaned(product.supplier_name)) {
+            <span class="product-badge product-badge--danger" title="This supplier has been deleted">
+              Deleted
+            </span>
+          }
+        </div>
+
+        <p class="product-item__cell">{{ product.price | number: '1.2-2' }}</p>
+
+        <div class="product-item__cell product-item__stock">
+          <span>{{ product.stock_quantity }}</span>
+          @if (product.is_low_stock) {
+            <span class="product-badge product-badge--warning">Low stock</span>
+          }
+          @if (product.is_heavy_and_cheap) {
+            <span class="product-badge product-badge--info">Heavy & cheap</span>
+          }
+        </div>
+
+        <div class="product-item__actions">
+          <button type="button" class="product-item__edit" (click)="editProduct(product)">
+            Edit
+          </button>
+          <button type="button" class="product-item__delete" (click)="confirmDeleteProduct(product)">
+            Delete
+          </button>
+        </div>
+      </article>
+    } @empty {
+      <p class="products__status">No products found.</p>
+    }
+  </div>
+
+  @if (modalMode === 'create' || modalMode === 'edit') {
+    <div class="product-modal" role="dialog" aria-modal="true" (click)="closeModal()">
+      <form
+        class="product-modal__panel product-form"
+        [formGroup]="productForm"
+        (ngSubmit)="submitProduct()"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="product-modal__header">
+          <h2>{{ isEditing() ? 'Edit product' : 'Add product' }}</h2>
+        </div>
+
+        <label class="product-form__field">
+          <span>Name</span>
+          <input type="text" formControlName="name" placeholder="Product name" />
+
+          @if (productForm.controls.name.touched && productForm.controls.name.invalid) {
+            <small>Name is required.</small>
+          }
+        </label>
+
+        <label class="product-form__field">
+          <span>SKU</span>
+          <input type="text" formControlName="sku" placeholder="Product SKU" />
+
+          @if (productForm.controls.sku.touched && productForm.controls.sku.invalid) {
+            <small>SKU is required.</small>
+          }
+        </label>
+
+        <div class="product-form__row">
+          <label class="product-form__field">
+            <span>Weight (g)</span>
+            <input type="number" formControlName="weight" placeholder="0" />
+
+            @if (productForm.controls.weight.touched && productForm.controls.weight.invalid) {
+              <small>Weight must be greater than 0.</small>
+            }
+          </label>
+
+          <label class="product-form__field">
+            <span>Price</span>
+            <input type="number" step="0.01" formControlName="price" placeholder="0.00" />
+
+            @if (productForm.controls.price.touched && productForm.controls.price.invalid) {
+              <small>Price must be greater than 0.</small>
+            }
+          </label>
+        </div>
+
+        <label class="product-form__field">
+          <span>Stock quantity</span>
+          <input type="number" formControlName="stock_quantity" placeholder="0" />
+
+          @if (productForm.controls.stock_quantity.touched && productForm.controls.stock_quantity.invalid) {
+            <small>Stock quantity is required.</small>
+          }
+        </label>
+
+        <label class="product-form__field">
+          <span>Category</span>
+          <select formControlName="category_id">
+            <option [ngValue]="null" disabled>Select a category</option>
+            @for (category of categories$ | async; track category.id) {
+              <option [ngValue]="category.id">{{ category.name }}</option>
+            }
+          </select>
+
+          @if (productForm.controls.category_id.touched && productForm.controls.category_id.invalid) {
+            <small>Category is required.</small>
+          }
+        </label>
+
+        <label class="product-form__field">
+          <span>Supplier</span>
+          <select formControlName="supplier_id">
+            <option [ngValue]="null" disabled>Select a supplier</option>
+            @for (supplier of suppliers; track supplier.id) {
+              <option [ngValue]="supplier.id">{{ supplier.company_name }}</option>
+            }
+          </select>
+
+          @if (productForm.controls.supplier_id.touched && productForm.controls.supplier_id.invalid) {
+            <small>Supplier is required.</small>
+          }
+        </label>
+
+        <div class="product-modal__actions">
+          <button class="product-form__reset" type="button" (click)="closeModal()">
+            Cancel
+          </button>
+          <button class="product-form__submit" type="submit" [disabled]="productForm.invalid">
+            {{ isEditing() ? 'Update product' : 'Create product' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+
+  @if (modalMode === 'details') {
+    <div class="product-modal" role="dialog" aria-modal="true" (click)="closeModal()">
+      <aside class="product-modal__panel product-details" (click)="$event.stopPropagation()">
+        <div class="product-modal__header">
+          <h2>Product details</h2>
+          <button class="product-modal__close" type="button" (click)="closeModal()">
+            Close
+          </button>
+        </div>
+
+        @if (loading$ | async) {
+          <p class="products__status">Loading product details...</p>
+        } @else {
+          @if (selectedProduct$ | async; as selectedProduct) {
+            <div class="product-details__body">
+              <div class="product-details__row">
+                <p class="product-details__label">Name</p>
+                <h3>{{ selectedProduct.name }}</h3>
+              </div>
+
+              <div class="product-details__row">
+                <p class="product-details__label">SKU</p>
+                <p>{{ selectedProduct.sku }}</p>
+              </div>
+
+              <div class="product-details__grid">
+                <div class="product-details__row">
+                  <p class="product-details__label">Category</p>
+                  <p class="product-details__ref">
+                    <span>{{ selectedProduct.category_name || '—' }}</span>
+                    @if (isCategoryOrphaned(selectedProduct.category_name)) {
+                      <span class="product-badge product-badge--danger" title="This category has been deleted">
+                        Deleted
+                      </span>
+                    }
+                  </p>
+                </div>
+
+                <div class="product-details__row">
+                  <p class="product-details__label">Supplier</p>
+                  <p class="product-details__ref">
+                    <span>{{ selectedProduct.supplier_name || '—' }}</span>
+                    @if (isSupplierOrphaned(selectedProduct.supplier_name)) {
+                      <span class="product-badge product-badge--danger" title="This supplier has been deleted">
+                        Deleted
+                      </span>
+                    }
+                  </p>
+                </div>
+
+                <div class="product-details__row">
+                  <p class="product-details__label">Weight</p>
+                  <p>{{ selectedProduct.weight }} g</p>
+                </div>
+
+                <div class="product-details__row">
+                  <p class="product-details__label">Price</p>
+                  <p>{{ selectedProduct.price | number: '1.2-2' }}</p>
+                </div>
+
+                <div class="product-details__row">
+                  <p class="product-details__label">Stock quantity</p>
+                  <p>{{ selectedProduct.stock_quantity }}</p>
+                </div>
+
+                @if (selectedProduct.created_at) {
+                  <div class="product-details__row">
+                    <p class="product-details__label">Created at</p>
+                    <p>{{ selectedProduct.created_at }}</p>
+                  </div>
+                }
+              </div>
+
+              @if (selectedProduct.is_low_stock || selectedProduct.is_heavy_and_cheap) {
+                <div class="product-details__row">
+                  <p class="product-details__label">Status</p>
+                  <div class="product-details__badges">
+                    @if (selectedProduct.is_low_stock) {
+                      <span class="product-badge product-badge--warning">Low stock</span>
+                    }
+                    @if (selectedProduct.is_heavy_and_cheap) {
+                      <span class="product-badge product-badge--info">Heavy & cheap</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        }
+      </aside>
+    </div>
+  }
+
+  @if (modalMode === 'delete' && deleteTarget; as target) {
+    <div class="product-modal" role="dialog" aria-modal="true" (click)="closeModal()">
+      <aside class="product-modal__panel product-confirm" (click)="$event.stopPropagation()">
+        <div class="product-modal__header">
+          <h2>Delete product</h2>
+        </div>
+
+        <p>
+          Are you sure you want to delete <strong>{{ target.name }}</strong>?
+          This action cannot be undone.
+        </p>
+
+        <div class="product-modal__actions">
+          <button class="product-form__reset" type="button" (click)="closeModal()">
+            Cancel
+          </button>
+          <button class="product-confirm__submit" type="button" (click)="proceedDelete()">
+            Delete product
+          </button>
+        </div>
+      </aside>
+    </div>
+  }
+</section>

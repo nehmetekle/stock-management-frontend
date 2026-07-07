@@ -10,6 +10,7 @@ import { provideStore } from '@ngrx/store';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 
 import { CategoryEffect } from './features/categories/state/category.effect';
+import { ProductEffect } from './features/products/state/product.effect';
 import { appReducers } from './store/app.reducer';
 import { routes } from './app.routes';
 
@@ -19,7 +20,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(withNoHttpTransferCache()),
     provideHttpClient(withFetch()),
     provideStore(appReducers),
-    provideEffects([CategoryEffect]),
+    provideEffects([CategoryEffect, ProductEffect]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode()

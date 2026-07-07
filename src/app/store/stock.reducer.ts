@@ -2,6 +2,7 @@ import { Action } from '@ngrx/store';
 
 import { categoryReducer } from '../features/categories/state/category.reducer';
 import { productReducer } from '../features/products/state/product.reducer';
+import { supplierReducer } from '../features/suppliers/state/supplier.reducer';
 import { StockState } from './stock.state';
 
 export function stockReducer(
@@ -10,6 +11,7 @@ export function stockReducer(
 ): StockState {
   return {
     categories: categoryReducer(state?.categories, action),
-    products: productReducer(state?.products, action)
+    products: productReducer(state?.products, action),
+    suppliers: supplierReducer(state?.suppliers, action)
   };
 }

@@ -17,7 +17,8 @@ import { CategoryModel } from '../categories/models/category.model';
 import { CategoryAction } from '../categories/state/category.action';
 import { selectAllCategories } from '../categories/state/category.selector';
 import { SupplierModel } from '../suppliers/models/supplier.model';
-import { SupplierService } from '../suppliers/services/supplier.service';
+import { SupplierAction } from '../suppliers/state/supplier.action';
+import { selectAllSuppliers } from '../suppliers/state/supplier.selector';
 import { ProductModel } from './models/product.model';
 import { ProductAction } from './state/product.action';
 import {
@@ -44,6 +45,7 @@ export class ProductsComponent implements OnInit, OnDestroy {
   readonly successMessage$ = this.store.select(selectProductsSuccessMessage);
   readonly selectedProduct$ = this.store.select(selectSelectedProduct);
   readonly categories$ = this.store.select(selectAllCategories);
+  readonly suppliers$ = this.store.select(selectAllSuppliers);
   modalMode: ProductModalMode = null;
   deleteTarget: ProductModel | null = null;
   suppliers: SupplierModel[] = [];
@@ -66,19 +68,18 @@ export class ProductsComponent implements OnInit, OnDestroy {
 
   constructor(
     private readonly store: Store<AppState>,
-    private readonly fb: FormBuilder,
-    private readonly supplierService: SupplierService
+    private readonly fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
     this.store.dispatch(ProductAction.getListProducts());
     this.store.dispatch(CategoryAction.getListCategories());
+    this.store.dispatch(SupplierAction.getListSuppliers());
 
-    this.supplierService
-      .getListSuppliers()
+    this.suppliers$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((response) => {
-        this.suppliers = response.data ?? [];
+      .subscribe((suppliers) => {
+        this.suppliers = suppliers;
         this.suppliersLoaded = true;
       });
 

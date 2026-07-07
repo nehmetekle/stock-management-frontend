@@ -23,8 +23,13 @@ export const routes: Routes = [
           import('../features/products/products.routes').then((m) => m.PRODUCTS_ROUTES)
       },
       {
+        path: 'suppliers',
+        loadChildren: () =>
+          import('../features/suppliers/suppliers.routes').then((m) => m.SUPPLIERS_ROUTES)
+      },
+      {
         path: '**',
-        redirectTo: 'categories'
+        redirectTo: 'products'
       }
     ]
   }
